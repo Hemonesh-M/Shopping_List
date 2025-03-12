@@ -26,9 +26,9 @@ class _GroceryListState extends State<GroceryList> {
   void _loadItems() async {
     try{
     // Uri url = Uri.https('firebaseio.com', 'Shopping-list.json');
-    Uri url = Uri.https('abc.firebaseio.com', 'Shopping-list.json');
-    // Uri url = Uri.https('shopping-list-faf8f-default-rtdb.firebaseio.com',
-    //     'Shopping-list.json');
+    // Uri url = Uri.https('abc.firebaseio.com', 'Shopping-list.json');
+    Uri url = Uri.https('shopping-list-faf8f-default-rtdb.firebaseio.com',
+        'Shopping-list.json');
     final response = await https.get(url);
     // print(response.statusCode);
     if(response.body=="null"){
