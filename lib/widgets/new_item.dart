@@ -1,7 +1,10 @@
 // import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shopping_list/data/categories.dart';
 import 'package:shopping_list/models/category.dart';
+import 'package:http/http.dart' as http;
 import 'package:shopping_list/models/grocery_item.dart';
 // import 'package:shopping_list/models/category.dart';
 
@@ -14,16 +17,33 @@ class NewItem extends StatefulWidget {
 }
 
 class _NewItem extends State<NewItem> {
+  var isSending=false;
   final formKey = GlobalKey<FormState>();
   String enteredName = "";
   int enteredQuantity = 1;
   // String enteredCategory = "";
   Category enteredCategory = categories[Categories.fruit]!;
 
-  void _saveItem() {
+  void _saveItem() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-      Navigator.of(context).pop<GroceryItem>(GroceryItem(id:DateTime.now().toString(), name: enteredName, quantity: enteredQuantity, category: enteredCategory));
+      isSending=true;
+      Uri url = Uri.https('shopping-list-faf8f-default-rtdb.firebaseio.com',
+          'Shopping-list.json');
+      // print("entered valus is $enteredName");
+      final response =await http.post(url,
+          headers: {'Content-type': 'application/json'},
+          body: jsonEncode({
+            "name": enteredName,
+            "quantity": enteredQuantity,
+            "category": enteredCategory.title
+          }));
+      final Map<String,dynamic> dResp=json.decode(response.body);
+      if (!context.mounted) return;
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop(
+        GroceryItem(id:dResp['name']! ,category: enteredCategory,name: enteredName,quantity:enteredQuantity )
+      );
     }
   }
 
@@ -33,6 +53,7 @@ class _NewItem extends State<NewItem> {
 
   @override
   Widget build(BuildContext context) {
+    print("Building NewItem widget");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add New Item"),
@@ -90,7 +111,7 @@ class _NewItem extends State<NewItem> {
                 ),
                 Expanded(
                   child: DropdownButtonFormField(
-                    value: enteredCategory,
+                      value: enteredCategory,
                       decoration: const InputDecoration(
                         label: Text("Category"),
                       ),
@@ -126,9 +147,9 @@ class _NewItem extends State<NewItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(onPressed: _reset, child: const Text("Reset")),
+                TextButton(onPressed: isSending?null: _reset, child: const Text("Reset")),
                 ElevatedButton(
-                    onPressed: _saveItem, child: const Text("Submit"))
+                    onPressed: isSending? null : _saveItem, child: isSending? const Center(child: CircularProgressIndicator()) :Text("Submit"))
               ],
             )
           ],

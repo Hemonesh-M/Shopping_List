@@ -10,9 +10,9 @@ const categories = {
     'Fruit',
     Color.fromARGB(255, 145, 255, 0),
   ),
-  Categories.meat: Category(
+  Categories.bakery: Category(
     'Meat',
-    Color.fromARGB(255, 255, 102, 0),
+    Color.fromARGB(195, 255, 153, 0),
   ),
   Categories.dairy: Category(
     'Dairy',
