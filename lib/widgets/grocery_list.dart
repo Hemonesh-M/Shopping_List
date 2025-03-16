@@ -68,7 +68,7 @@ class _GroceryListState extends State<GroceryList> {
     }
     catch(err){
       setState(() {
-        error = "Something Went Wrong!!!  Try again Later.";
+        error = " Could NOT sent Request for DATA Something Went Wrong!!!  Try again Later.";
       });
     }
   }
